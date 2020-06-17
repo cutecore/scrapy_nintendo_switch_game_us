@@ -21,14 +21,15 @@ class GameInfo(object):
     pass
 
 class SwitchAmercianSpider(scrapy.Spider):
+
     name = "switch_amercian"
 
     def get_america_games_web(self,game):
-        logging.log(logging.WARNING, "This is a warning")
-        if len(game.url) == 0:
+        
+        if len(game.slug) == 0:
             return -1
 
-        gameurl = 'https://www.nintendo.com/games/detail/' + game.url
+        gameurl = 'https://www.nintendo.com/games/detail/' + game.slug
         response = requests.post(gameurl)
         sel = Selector(response)
 
@@ -40,72 +41,70 @@ class SwitchAmercianSpider(scrapy.Spider):
             str = i.string
             if str:
                 if 'window.game' in str:
+                    game.script = str
                     jsList = str.strip().split(',')
                     for jsBean in jsList:
                         if jsBean.find("productCode") != -1:
-                            game.code = jsBean.split(':')[1].replace("\"", "")
+                            game.codeView = jsBean.split(':')[1].replace("\"", "")
                             break
-        print (game.code)
+        
 
         #发布日期
-        a = sel.css('div .release-date dd::text').extract()
+        game.releaseDateView =  sel.css('div .release-date dd::text').extract()
         #print ('发布日期',a)
-
         # 开发者
-        a = sel.css('div .developer dd::text').extract()
+        game.developerView = sel.css('div .developer dd::text').extract()
         #print ('开发者',a)
-
-        
-        a = sel.css('div .players dd::text').extract()
+        game.playersView = sel.css('div .players dd::text').extract()
         #print ('玩家人数',a)
-
-
-        # 游戏容量 
-        a = sel.css('div .file-size dd::text').extract()
+        game.fileSizeView = sel.css('div .file-size dd::text').extract()
         #print ('游戏容量',a)
-        
-    
-        
-        a = sel.css('div .genre dd::text').extract()
+        game.GenreView = sel.css('div .genre dd::text').extract()
         #print ('游戏类型',a)
-
-        
-        a = sel.css('div .supported-languages dd::text').extract()
-        #print ('游戏语言',a)
-
-        a = sel.css('div .publisher dd::text').extract()
+        game.supportedLanguagesView = sel.css('div .supported-languages dd::text').extract()
+        #print ('游戏语言',a)]
+        game.publisherView = sel.css('div .publisher dd::text').extract()
         #print ('游戏发行商',a)
-
-        a = sel.css('div .playmode-image img::attr(alt)').extract()
-        #print ('playmode ',a)
-
-        #service-logo
-        a = sel.css('div .service-logo img::attr(alt)').extract()
-        #print ('service - online',a)
-
-        #services-supported
-        a = sel.css('div .services-supported a::attr(aria-label)').extract()
-        #print ('service - save data cloud ',a)
-
-        #详情页 大图 
-        a = sel.css('div .hero-only::attr(src)').extract()
-        #print ('详情页大图 ',a)
+        game.playModeView = sel.css('div .playmode-image img::attr(alt)').extract()
         
+        # 用下面的
+        #game.serviceOnline = sel.css('div .service-logo img::attr(alt)').extract()
+        
+        # online 云存储 vouchers 
+        game.saveDataCloud = sel.css('div .services-supported a::attr(aria-label)').extract()
+       
+       
         #availability
-        a = sel.css('div .availability::text').extract()
-        #print ('可用 ',a)
+        game.availabilityView = sel.css('div .availability::text').extract()
+        game.iconView = sel.css('div .hero-only::attr(src)').extract()
+        #游戏内'截图'
+        game.gameGalleryView = sel.css('product-gallery-item::attr(src)').extract()
+        game.gameGalleryVideoView = sel.css('product-gallery-item::attr(video-id)').extract()
+        #描述
+        game.overviewh2View = sel.css('div .overview-content h2::text').extract()
+        game.overviewpbView = sel.css('div .overview-content p b::text').extract()
+        game.overviewpView = sel.css('div .overview-content p::text').extract()
+        # 媒体评价 
+        game.gameindustryquoteView = sel.css('li.industry-quote p::text').extract()
+        game.gameindustryquoteCiteView = sel.css('li.industry-quote cite::text').extract()
+        # 支付(数字实体)
+        game.wherePayView = sel.css('nclood-where-to-buy::attr(label)').extract()
+        game.buyNowView = sel.css('styled-button.buy-now').extract()
+        # 价格
+        game.msrpView = sel.css('span.msrp::text').extract()
+        # 金币
+        
+        overdict = game.__dict__
+        datajson = json.dumps(overdict, ensure_ascii = False)
+        headers = {'Content-Type': 'application/json'}
+        requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson.encode())
 
-        # !!!
-        a = sel.css('span .msrp::text').extract()
-        #print ('价格 ',a)
-        a = sel.css('span .points::text').extract()
-        #print ('金币 ',a)
+       
 
-        a = sel.css('product-gallery-item::attr(src)').extract()
-        #print('五张图',a)
 
-        a = sel.css('div .drawer p::text').extract()
-        #print('描述',a)
+       
+        
+        
 
 
         return 
@@ -135,82 +134,46 @@ class SwitchAmercianSpider(scrapy.Spider):
         
 
         for game in game_list:
-            #print (game) 
+             
             info = GameInfo()
             info.type = game.get('type', '')
             info.locale = game.get('locale', '')
-            info.url = game.get('slug', '')
-            title = info.title = game.get('title', '')
-            # 之前未抓取
+            info.slug = game.get('slug', '')
+            info.title = game.get('title', '')
             info.description = game.get('description', '')
-
+            info.lastModified = game.get('lastModified', '')
             info.nsuid = game.get('nsuid', '')
             info.slug = game.get('slug', '')
-            info.icon = game.get('boxArt', '')
-
-            # gallery 不明字段
-            # "platform":"Nintendo Switch",
-            # characters 未抓取
+            info.boxArt = game.get('boxArt', '')
+            info.gallery = game.get('gallery','')
+            info.platform = game.get('platform','')
+            info.releaseDateMask = game.get('releaseDateMask','')
+            info.characters = game.get('characters','')
             info.category = game.get('categories', {})
-            # 之前未抓取
-            info.msrp = game.get('msrp', '')
-            # 之前未抓取
             info.esrb = game.get('esrb', '')
-            # 之前未抓取
             info.esrbDescriptors = game.get('esrbDescriptors', '')
-            # virtualConsole 不明
+            info.virtualConsole = game.get('virtualConsole', '') 
+            info.generalFilters = game.get('generalFilters', '')
+            info.filterShops = game.get('filterShops', '')
+            info.filterPlayers = game.get('filterPlayers', '')
+            info.publishers = game.get('publishers', '')
+            info.developers = game.get('developers', '')
+            info.players = game.get('players', '')
+            info.featured = game.get('featured', '')
+            info.freeToStart = game.get('freeToStart', '')
+            info.priceRange = game.get('priceRange', '')
+            info.msrp = game.get('msrp','')
+            info.salePrice = game.get('salePrice', '')
+            info.availability = game.get('availability', '')
+            info.objectID = game.get('objectID', '')
+            info._distinctSeqID = game.get('_distinctSeqID', '')
+            info._highlightResult = game.get('_highlightResult', '')
 
-            # 开发商 发行商 从页面拿 可能也更一致
-            publishers = game.get('publishers', '')
-            developers = game.get('developers', '')
-
-            code = game.get('game_code', '')
-            if len(code) >= 8:
-                code = code.replace('-', '')
-                # 第五到第八个字母数字唯一标识一个游戏
-                code = code[4:8]
-            info.code = code
-            players = 0
-            players_str = game.get('players', '')
-            # print("players: %s" % players)
-            if len(players_str) > 0:
-                if players_str == '1 player':
-                    players = 1
-                else:
-                    # 可以匹配到  n players 以及 n players simultaneous
-                    matcher_a = re.compile(r'(\d+) players')
-                    matcher_b = re.compile(r'up to (\d+) players')
-                    try:
-                        match_result_a = re.match(matcher_a, players_str)
-                        players = match_result_a.group(1)
-                    except:
-                        try:
-                            match_result_b = re.match(matcher_b, players_str)
-                            players = match_result_b.group(1)
-                        except:
-                            if players_str != 'To be determined':
-                                pass 
-                                #print "ERROR::players match failed in america for players:%s" % players_str
-
-        
-            # featured":false,
-            # "freeToStart":false,
-            # "priceRange":"$0 - $4.99",
-            # "salePrice":null,
-            # "availability":[
-            #    "Available now"
-            # ],
-
-            pubDate = game.get('releaseDateMask', '')
-            info.pubDate = pubDate
-            info.players = players
-            info.url = info.slug
+            
             self.get_america_games_web(info)
             
-            #print(info.title,info.url)
-
-            with open('filename', 'a+',encoding='utf-8') as f:
-                f.write(info.title + "\n")
+            #with open('filename', 'a+',encoding='utf-8') as f:
+            #    f.write(info.title + "\n")
 
 
 
@@ -253,6 +216,8 @@ class SwitchAmercianSpider(scrapy.Spider):
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%5D%2C%5B%22categories%3AAction%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=priceRange&facetFilters=%5B%5B%22categories%3AAction%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=categories&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%5D%2C%5B%22categories%3AAction%22%5D%5D"}]}'
 
         self.fetchFromUrlWithFilter(url, data)
+
+        exit()
 
         # action + ['$5 -9']
 
@@ -326,7 +291,12 @@ class SwitchAmercianSpider(scrapy.Spider):
 
 
 
-
+if __name__ == "__main__":
+    data = {"title": "title", "msrp": '123456','locale' : 'american'}
+    datajson = json.dumps(data)
+    
+    headers = {'Content-Type': 'application/json'}
+    requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson)
         
 
    

@@ -42,13 +42,13 @@ class SwitchAmercianSpider(scrapy.Spider):
             if str:
                 if 'window.game' in str:
                     game.script = str
-                    jsList = str.strip().split(',')
+                    jsList = str.split(',')
                     for jsBean in jsList:
                         if jsBean.find("productCode") != -1:
                             game.codeView = jsBean.split(':')[1].replace("\"", "")
                             break
         
-
+        
         #发布日期
         game.releaseDateView =  sel.css('div .release-date dd::text').extract()
         #print ('发布日期',a)
@@ -94,12 +94,30 @@ class SwitchAmercianSpider(scrapy.Spider):
         game.msrpView = sel.css('span.msrp::text').extract()
         # 金币
         
+
+        
+
+
         overdict = game.__dict__
+        if overdict is not None:
+            for key in overdict:
+                if overdict[key] is not None:
+                    if type(overdict[key]) == int:
+                        continue
+                    elif type(overdict[key]) == str:
+                        continue
+                    else :
+                        overdict[key] = json.dumps(overdict[key])
+
+                
+                    
+        
+
         datajson = json.dumps(overdict, ensure_ascii = False)
+
         headers = {'Content-Type': 'application/json'}
         requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson.encode())
-
-       
+        
 
 
        
@@ -115,7 +133,7 @@ class SwitchAmercianSpider(scrapy.Spider):
 
         data = data.replace('[page]', str(page), 1)
 
-        response = requests.post(url, data=data, timeout=5)
+        response = requests.post(url, data=data, timeout=3)
 
         if response.status_code != 200:
             #print("请求未能正常返回数据,HTTP STATUS CODE :", response.status_code)
@@ -181,7 +199,7 @@ class SwitchAmercianSpider(scrapy.Spider):
 
         _data = data.replace('[page]', str(0), 1)
 
-        response = requests.post(url, _data, timeout=10)
+        response = requests.post(url, _data, timeout=3)
 
         if response.status_code != 200:
             print("请求未能正常返回数据,HTTP STATUS CODE :", response.status_code)
@@ -217,7 +235,6 @@ class SwitchAmercianSpider(scrapy.Spider):
 
         self.fetchFromUrlWithFilter(url, data)
 
-        exit()
 
         # action + ['$5 -9']
 
@@ -292,7 +309,10 @@ class SwitchAmercianSpider(scrapy.Spider):
 
 
 if __name__ == "__main__":
-    data = {"title": "title", "msrp": '123456','locale' : 'american'}
+    data = GameInfo()
+    data.test = '中文'
+    
+
     datajson = json.dumps(data)
     
     headers = {'Content-Type': 'application/json'}

@@ -6,9 +6,7 @@ import re
 from bs4 import BeautifulSoup
 from scrapy.selector import Selector
 import logging
-
-
-
+#import tablib
 
 class GameInfo(object):
     # __slots__ = ('type','code', 'url', 'title', 'pubDate', 'pubDateUS', 'pubDateEU', 'pubDateJP', 'icon', 'iconFrom', 'nsuid', 'nsuidEu', 'nsuidJp',
@@ -94,10 +92,7 @@ class SwitchAmercianSpider(scrapy.Spider):
         game.msrpView = sel.css('span.msrp::text').extract()
         # 金币
         
-
-        
-
-
+    
         overdict = game.__dict__
         if overdict is not None:
             for key in overdict:
@@ -109,16 +104,15 @@ class SwitchAmercianSpider(scrapy.Spider):
                     else :
                         overdict[key] = json.dumps(overdict[key])
 
-                
-                    
-        
-
         datajson = json.dumps(overdict, ensure_ascii = False)
-
         headers = {'Content-Type': 'application/json'}
         requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson.encode())
         
 
+
+        # with open("filename", 'a+') as f:
+        #     f.write(game.title + "\n")
+    
 
        
         
@@ -133,7 +127,7 @@ class SwitchAmercianSpider(scrapy.Spider):
 
         data = data.replace('[page]', str(page), 1)
 
-        response = requests.post(url, data=data, timeout=3)
+        response = requests.post(url, data=data, timeout=30)
 
         if response.status_code != 200:
             #print("请求未能正常返回数据,HTTP STATUS CODE :", response.status_code)
@@ -192,6 +186,22 @@ class SwitchAmercianSpider(scrapy.Spider):
             
             #with open('filename', 'a+',encoding='utf-8') as f:
             #    f.write(info.title + "\n")
+            # game = info
+            # overdict = game.__dict__
+            # if overdict is not None:
+            #     for key in overdict:
+            #         if overdict[key] is not None:
+            #             if type(overdict[key]) == int:
+            #                 continue
+            #             elif type(overdict[key]) == str:
+            #                 continue
+            #             else :
+            #                 overdict[key] = json.dumps(overdict[key])
+
+            # datajson = json.dumps(overdict, ensure_ascii = False)
+
+            # with open("filename", 'a+') as f:
+            #     f.write(datajson + "\n")
 
 
 
@@ -199,7 +209,7 @@ class SwitchAmercianSpider(scrapy.Spider):
 
         _data = data.replace('[page]', str(0), 1)
 
-        response = requests.post(url, _data, timeout=3)
+        response = requests.post(url, _data, timeout=30)
 
         if response.status_code != 200:
             print("请求未能正常返回数据,HTTP STATUS CODE :", response.status_code)
@@ -311,12 +321,19 @@ class SwitchAmercianSpider(scrapy.Spider):
 if __name__ == "__main__":
     data = GameInfo()
     data.test = '中文'
+    data.locale = 'en_US'
+     
+    temp = data.__dict__
     
 
-    datajson = json.dumps(data)
+    dataJson = json.dumps(temp)
     
     headers = {'Content-Type': 'application/json'}
-    requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson)
+    #requests.post('http://127.0.0.1:5060/game-service/game',headers = headers, data= datajson)
+
+    url = 'http://127.0.0.1:5060/game-service/game'
+    scrapy.Request(url=url,method="POST",body=dataJson,headers=headers)
+        
         
 
    

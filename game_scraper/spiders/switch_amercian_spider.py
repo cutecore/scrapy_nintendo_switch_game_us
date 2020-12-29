@@ -7,10 +7,6 @@ from bs4 import BeautifulSoup
 from scrapy.selector import Selector
 import logging
 
-# 20201223 更新 更新了结构 感觉更正确一点
-# 因为windows pip 安装包依赖 vc++ 14 问题 没有时间精力去解决 windows 上安装问题 
-# 在linux tty 下编写，暂时没有做 item 和 pipeline 下次补上 
-
 
 class SwitchSpider(scrapy.Spider):
 
@@ -76,10 +72,9 @@ class SwitchSpider(scrapy.Spider):
             info['_distinctSeqID'] = game.get('_distinctSeqID', '')
             info['_highlightResult'] = game.get('_highlightResult', '')
 
-            pageUrl.append(('https://www.nintendo.com/games/detail/' +  info['slug'], info))
+            pageUrl.append(('https://www.nintendo.com/games/detail/' +  info['slug'] + '/' , info))
 
-            
-            #self.get_america_games_web(info)
+
 
         return pageUrl
             
@@ -133,21 +128,21 @@ class SwitchSpider(scrapy.Spider):
         # Mature 376
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
 
-        _temp = self.getCountThenGetPageUrl(url, data)
-        pageurl.extend(_temp)
+        #_temp = self.getCountThenGetPageUrl(url, data)
+        #pageurl.extend(_temp)
 
         # every 10 + 911
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22esrb%3AEveryone%2010%2B%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22esrb%3AEveryone%2010%2B%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22esrb%3AEveryone%2010%2B%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
 
-        _temp = self.getCountThenGetPageUrl(url, data)
-        pageurl.extend(_temp)
+        #_temp = self.getCountThenGetPageUrl(url, data)
+        #pageurl.extend(_temp)
 
         # teen <40 958
 
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=priceRange&facetFilters=%5B%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22priceRange%3AFree%20to%20start%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
 
-        _temp = self.getCountThenGetPageUrl(url, data)
-        pageurl.extend(_temp)
+        #_temp = self.getCountThenGetPageUrl(url, data)
+        #pageurl.extend(_temp)
 
         # teen > 40 64
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=priceRange&facetFilters=%5B%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22priceRange%3A%2440%2B%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3ATeen%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
@@ -158,44 +153,35 @@ class SwitchSpider(scrapy.Spider):
         # everyone 995
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3AFree%20to%20start%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=priceRange&facetFilters=%5B%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3AFree%20to%20start%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3AFree%20to%20start%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22priceRange%3A%245%20-%20%249.99%22%2C%22priceRange%3A%240%20-%20%244.99%22%2C%22priceRange%3AFree%20to%20start%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
 
-        _temp = self.getCountThenGetPageUrl(url, data)
-        pageurl.extend(_temp)
+        #_temp = self.getCountThenGetPageUrl(url, data)
+        #pageurl.extend(_temp)
 
         # everyone 472
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%2C%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=priceRange&facetFilters=%5B%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%2C%22priceRange%3A%2440%2B%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%2C%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22priceRange%3A%2410%20-%20%2419.99%22%2C%22priceRange%3A%2420%20-%20%2439.99%22%2C%22priceRange%3A%2440%2B%22%5D%2C%5B%22esrb%3AEveryone%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
-        _temp = self.getCountThenGetPageUrl(url, data)
-        pageurl.extend(_temp)
+        #_temp = self.getCountThenGetPageUrl(url, data)
+        #pageurl.extend(_temp)
 
 
         #---------------------------------------------------------------------------------------------------------------
-        #print(len(pageurl))
+        print(len(pageurl))
 
         for url in pageurl:
-            #print(url)
 
-            datajson = json.dumps(url[1], ensure_ascii = False)
-            headers = {'Content-Type': 'application/json'}
-            requests.post('http://127.0.0.1:81/game',headers = headers, data= datajson.encode())
-
+            headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
+            yield scrapy.Request(url=url[0], callback=self.parse, headers = headers ,meta = {'interface' : url[1]})
+       
             
-            #requests.post('http://127.0.0.1:81/game', data= {"key":datajson.encode()})
-
-            #yield scrapy.Request(url=url, callback=self.parse, meta = {'name' : 'Zarten'})
-            pass 
-
-        for url in ["https://www.baidu.com","https://www.baidu.com"]:
-            # 此处应该 处理 pageurl 里面的url 页面 下个版本fix
-            yield scrapy.Request(url=url, callback=self.parse)
            
 
-    def parse(self, response):
-        
-        return None
+   
 
-    def parse2(self, response):  
+    def parse(self, response):  
+
+        item = response.meta['interface']
+
         sel = Selector(response)
 
-        soup = BeautifulSoup(response.content, 'lxml', from_encoding='utf-8')
+        soup = BeautifulSoup(response.body, 'lxml', from_encoding='utf-8')
         
         js = soup.find_all("script")
         
@@ -203,75 +189,82 @@ class SwitchSpider(scrapy.Spider):
             str = i.string
             if str:
                 if 'window.game' in str:
-                    game.script = str
+                    #item['script'] = str
                     jsList = str.split(',')
                     for jsBean in jsList:
                         if jsBean.find("productCode") != -1:
-                            game.codeView = jsBean.split(':')[1].replace("\"", "")
+                            item['codeView'] = jsBean.split(':')[1].replace("\"", "")
                             break
         
         
         #发布日期
-        game.releaseDateView =  sel.css('div .release-date dd::text').extract()
+        item['releaseDateView'] =  sel.css('div .release-date dd::text').extract()
         #print ('发布日期',a)
         # 开发者
-        game.developerView = sel.css('div .developer dd::text').extract()
+        item['developerView'] = sel.css('div .developer dd::text').extract()
         #print ('开发者',a)
-        game.playersView = sel.css('div .players dd::text').extract()
+        item['playersView'] = sel.css('div .players dd::text').extract()
         #print ('玩家人数',a)
-        game.fileSizeView = sel.css('div .file-size dd::text').extract()
+        item['fileSizeView'] = sel.css('div .file-size dd::text').extract()
         #print ('游戏容量',a)
-        game.GenreView = sel.css('div .genre dd::text').extract()
+        item['GenreView'] = sel.css('div .genre dd::text').extract()
         #print ('游戏类型',a)
-        game.supportedLanguagesView = sel.css('div .supported-languages dd::text').extract()
+        item['supportedLanguagesView'] = sel.css('div .supported-languages dd::text').extract()
         #print ('游戏语言',a)]
-        game.publisherView = sel.css('div .publisher dd::text').extract()
+        item['publisherView'] = sel.css('div .publisher dd::text').extract()
         #print ('游戏发行商',a)
-        game.playModeView = sel.css('div .playmode-image img::attr(alt)').extract()
+        item['playModeView'] = sel.css('div .playmode-image img::attr(alt)').extract()
         
         # 用下面的
-        #game.serviceOnline = sel.css('div .service-logo img::attr(alt)').extract()
+        #item['serviceOnline'] = sel.css('div .service-logo img::attr(alt)').extract()
         
         # online 云存储 vouchers 
-        game.saveDataCloud = sel.css('div .services-supported a::attr(aria-label)').extract()
+        item['saveDataCloud'] = sel.css('div .services-supported a::attr(aria-label)').extract()
        
        
         #availability
-        game.availabilityView = sel.css('div .availability::text').extract()
-        game.iconView = sel.css('div .hero-only::attr(src)').extract()
+        item['availabilityView'] = sel.css('div .availability::text').extract()
+        item['iconView'] = sel.css('div .hero-only::attr(src)').extract()
         #游戏内'截图'
-        game.gameGalleryView = sel.css('product-gallery-item::attr(src)').extract()
-        game.gameGalleryVideoView = sel.css('product-gallery-item::attr(video-id)').extract()
+        item['gameGalleryView'] = sel.css('product-gallery-item::attr(src)').extract()
+        item['gameGalleryVideoView'] = sel.css('product-gallery-item::attr(video-id)').extract()
         #描述
-        game.overviewh2View = sel.css('div .overview-content h2::text').extract()
-        game.overviewpbView = sel.css('div .overview-content p b::text').extract()
-        game.overviewpView = sel.css('div .overview-content p::text').extract()
+        item['overviewh2View'] = sel.css('div .overview-content h2::text').extract()
+        item['overviewpbView'] = sel.css('div .overview-content p b::text').extract()
+        item['overviewpView'] = sel.css('div .overview-content p::text').extract()
         # 媒体评价 
-        game.gameindustryquoteView = sel.css('li.industry-quote p::text').extract()
-        game.gameindustryquoteCiteView = sel.css('li.industry-quote cite::text').extract()
+        item['gameindustryquoteView'] = sel.css('li.industry-quote p::text').extract()
+        item['gameindustryquoteCiteView'] = sel.css('li.industry-quote cite::text').extract()
         # 支付(数字实体)
-        game.wherePayView = sel.css('nclood-where-to-buy::attr(label)').extract()
-        game.buyNowView = sel.css('styled-button.buy-now').extract()
+        item['wherePayView'] = sel.css('nclood-where-to-buy::attr(label)').extract()
+        item['buyNowView'] = sel.css('styled-button.buy-now').extract()
         # 价格
-        game.msrpView = sel.css('span.msrp::text').extract()
+        item['msrpView'] = sel.css('span.msrp::text').extract()
         # 金币
+
+       
         
     
-        overdict = game.__dict__
-        if overdict is not None:
-            for key in overdict:
-                if overdict[key] is not None:
-                    if type(overdict[key]) == int:
-                        continue
-                    elif type(overdict[key]) == str:
-                        continue
-                    else :
-                        overdict[key] = json.dumps(overdict[key])
-
-        datajson = json.dumps(overdict, ensure_ascii = False)
-        #headers = {'Content-Type': 'application/json'}
-        requests.post('http://127.0.0.1:81/game', data= {"key":datajson.encode()})
-
+       
+        for key in item:
+            
+            print(item[key])
+            print(type(item[key]))
+            if type(item[key]) == int:
+                continue
+            if type(item[key]) == str:
+                continue
+            if type(item[key]) == list:
+                if len(item[key]) == 1:
+                    item[key] = item[key][0].strip()
+                    print(item[key])
+                if len(item[key]) == 0:
+                    item[key] = ""
+           
+               
+        datajson = json.dumps(item, ensure_ascii = False)
+        headers = {'Content-Type': 'application/json'}
+        requests.post('http://127.0.0.1:81/game',headers = headers, data= datajson.encode())
         return 
 
 

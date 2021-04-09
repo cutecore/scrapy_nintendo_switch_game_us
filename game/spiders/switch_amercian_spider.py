@@ -112,12 +112,13 @@ class SwitchSpider(scrapy.Spider):
 
     def start_requests(self):
 
-        pageurl = []
+        pageurl = list()
 
         # action + [ free to start , $0 - 4.99]
 
         url = 'https://u3b6gr4ua3-1.algolianet.com/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20JavaScript%20(3.33.0)%3B%20Browser%20(lite)%3B%20JS%20Helper%202.20.1&x-algolia-application-id=U3B6GR4UA3&x-algolia-api-key=9a20c93440cf63cf1a7008d75f7438bf'
-
+        url = 'https://u3b6gr4ua3-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20JavaScript%20(3.33.0)%3B%20Browser%20(lite)%3B%20JS%20Helper%202.20.1&x-algolia-application-id=U3B6GR4UA3&x-algolia-api-key=c4da8be7fd29f0f5bfa42920b0a99dc7'
+ 
         # Mature 376
         data = '{"requests":[{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=42&maxValuesPerFacet=30&page=[page]&analytics=false&facets=%5B%22generalFilters%22%2C%22platform%22%2C%22availability%22%2C%22categories%22%2C%22filterShops%22%2C%22virtualConsole%22%2C%22characters%22%2C%22priceRange%22%2C%22esrb%22%2C%22filterPlayers%22%5D&tagFilters=&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=esrb&facetFilters=%5B%5B%22availability%3AAvailable%20now%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=availability&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22platform%3ANintendo%20Switch%22%5D%5D"},{"indexName":"noa_aem_game_en_us","params":"query=&hitsPerPage=1&maxValuesPerFacet=30&page=0&analytics=false&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&facets=platform&facetFilters=%5B%5B%22esrb%3AMature%22%5D%2C%5B%22availability%3AAvailable%20now%22%5D%5D"}]}'
 
@@ -157,15 +158,14 @@ class SwitchSpider(scrapy.Spider):
         # ---------------------------------------------------------------------------------------------------------------
         # print(len(pageurl))
 
-        # for url in pageurl:
-        #
-        #     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-        #     yield scrapy.Request(url=url[0], callback=self.parse, headers = headers ,meta = {'interface' : url[1]})
-        #
-        url = pageurl[0]
-        #
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-        yield scrapy.Request(url=url[0], callback=self.parse, headers=headers, meta={'interface': url[1]})
+        for url in pageurl:
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
+            yield scrapy.Request(url=url[0], callback=self.parse, headers=headers, meta={'interface': url[1]})
+
+        # url = pageurl[0]
+        # #
+        # headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
+        # yield scrapy.Request(url=url[0], callback=self.parse, headers=headers, meta={'interface': url[1]})
 
     #
 
@@ -206,8 +206,7 @@ class SwitchSpider(scrapy.Spider):
 
         print(json.dumps(item))
 
-        with open("d:/1", "w+") as f:
-            f.write(json.dumps(item))
+
         datajson = json.dumps(item, ensure_ascii=False)
         headers = {'Content-Type': 'application/json',
                    'auth': 'eyJ0eXAiOiJKV1QiLCJhbG'
